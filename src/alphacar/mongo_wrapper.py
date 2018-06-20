@@ -25,13 +25,21 @@ class MongoWrapper(object):
     def __init__(self, conf = DEFAULT_CONF):
         
         try:
-            self.conn = pymongo.MongoClient(conf['host'], conf['port'])
+            new_conf = DEFAULT_CONF.copy()
+            new_conf.update(conf)
+            
+            port = new_conf['port']
+            if not isinstance(port, int):
+                port = int(port)
+
+            self.conn = pymongo.MongoClient(new_conf['host'], port)
+            reCreated = True if new_conf['reCreated'] == '1' else False
             if reCreated:
-                self.conn.drop_database(conf['db_name'])
-            self.db = self.conn[conf['db_name']]
-            self.username=conf['username']
-            self.password=conf['password']
-            if self.username and self.password:
+                self.conn.drop_database(new_conf['db_name'])
+            self.db = self.conn[new_conf['db_name']]
+            self.username=new_conf['username']
+            self.password=new_conf['password']
+            if self.username and self.username != '' and self.password and self.password != '' :
                 self.connected = self.db.authenticate(self.username, self.password)
             else:
                 self.connected = True

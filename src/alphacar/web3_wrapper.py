@@ -15,18 +15,20 @@ DEFAULT_CONF = {
 class Web3Wrapper(object):
 
     def __init__(self, conf = DEFAULT_CONF):
+        new_conf = DEFAULT_CONF.copy()
+        new_conf.update(conf)
     
-        self.chainId = conf['chainId']
+        self.chainId = new_conf['chainId']
         if not isinstance(self.chainId, int):
             self.chainId = int(self.chainId)
-        self.w3 = Web3(HTTPProvider(conf['url']))
-        pk_path = conf['privatekey_path']
-        password = conf['password']
-        self.w3.eth.defaultAccount = conf['address']
+        self.w3 = Web3(HTTPProvider(new_conf['url']))
+        pk_path = new_conf['privatekey_path']
+        password = new_conf['password']
+        self.w3.eth.defaultAccount = new_conf['address']
         if self.w3.eth.defaultAccount == '':
             self.w3.eth.defaultAccount = self.w3.eth.coinbase
             
-        self.needKey = conf['needKey']
+        self.needKey = new_conf['needKey']
         if self.needKey and pk_path != '':
             with open(pk_path, "r") as keyfile:
                 encrypted_key = keyfile.read()
