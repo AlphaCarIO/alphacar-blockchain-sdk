@@ -5,9 +5,9 @@ from setuptools import setup, find_packages
 packages = ['alphacar']
 
 requires = [
-    'ipfsapi>=0.4.3',
-    'pymongo>=3.6.1',
-    'web3>=4.3.0',
+    'ipfsapi==0.4.3',
+    'pymongo==3.6.1',
+    'web3==4.2.0',
 ]
 
 setup(

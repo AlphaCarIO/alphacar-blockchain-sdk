@@ -6,11 +6,10 @@ import json
 DEFAULT_CONF = {
     'chainId': 3,
     'url': 'https://ropsten.infura.io/4gmRz0RyQUqgK0Q1jdu5',
-    'db_name': 'alphacar',
     'privatekey_path': 'keystore/UTC--2018-01-14T18-46-20.321874736Z--da83aee0f49802a331d455f503341a5fdcbde923',
     'password': 'a',
     'address': '0xda83aee0f49802a331d455f503341a5fdcbde923',
-    'needKey': True,
+    'needKey': False,
 }
 
 class Web3Wrapper(object):
@@ -18,6 +17,8 @@ class Web3Wrapper(object):
     def __init__(self, conf = DEFAULT_CONF):
     
         self.chainId = conf['chainId']
+        if not isinstance(self.chainId, int):
+            self.chainId = int(self.chainId)
         self.w3 = Web3(HTTPProvider(conf['url']))
         pk_path = conf['privatekey_path']
         password = conf['password']
@@ -38,6 +39,9 @@ class Web3Wrapper(object):
         return self.w3.eth.getBlock('latest')
 
     def signAndSend(self, raw_txn) :
+
+        print('signAndSend raw_txn:', raw_txn)
+
         signed_txn = self.w3.eth.account.signTransaction(raw_txn, private_key = self.privateKey)
         tx = self.w3.eth.sendRawTransaction(signed_txn.rawTransaction)
         return tx
@@ -73,8 +77,10 @@ class Web3Wrapper(object):
         param = self.getTxParam(**kwargs)
 
         raw_txn = {
+            'chainId': self.chainId,
             'nonce': param['nonce'],
             'from': param['account'],
+            'to': '',
             'value': param['value'],
             'gas': param['gas'],
             'gasPrice': param['gasPrice'],
