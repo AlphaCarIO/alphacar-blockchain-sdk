@@ -20,11 +20,6 @@ setup(
     license="MIT",
     keywords="alphacar blockchain",
     url="https://www.alphacar.io",
-    project_urls={
-        "Bug Tracker": "https://github.com/AlphaCarIO/alphacar-blockchain-sdk/issues",
-        "Documentation": "",
-        "Source Code": "https://github.com/AlphaCarIO/alphacar-blockchain-sdk",
-    },
     #scripts=['say_hello.py'],
 
     packages=packages,

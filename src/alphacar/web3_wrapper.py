@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from web3 import Web3, HTTPProvider
+from web3.contract import ConciseContract
 
 import json
 
@@ -19,7 +20,8 @@ class Web3Wrapper(object):
     def __init__(self, conf = DEFAULT_CONF):
         new_conf = DEFAULT_CONF.copy()
         new_conf.update(conf)
-    
+
+        self.contract = None
         self.chainId = new_conf['chainId']
         self.w3 = Web3(HTTPProvider(new_conf['url']))
         pk_path = new_conf['privatekey_path']
@@ -42,7 +44,7 @@ class Web3Wrapper(object):
 
     def signAndSend(self, raw_txn) :
 
-        print('signAndSend raw_txn:', raw_txn)
+        #print('signAndSend raw_txn:', raw_txn)
 
         signed_txn = self.w3.eth.account.signTransaction(raw_txn, private_key = self.privateKey)
         tx = self.w3.eth.sendRawTransaction(signed_txn.rawTransaction)
@@ -101,20 +103,46 @@ class Web3Wrapper(object):
         tx_hash = contract.deploy(transaction={'from': acc, 'to': '', 'gas': gas, 'gasPrice': gasPrice, 'value': 0})
         return tx_hash
 
-    def storeHash(self, _datetime, _hashVal, contract_addr, abi_content, **kwargs) :
+    def initContract(self, crowdsale_addr, _abi):
+        self.contract = self.w3.eth.contract(address = crowdsale_addr, abi = _abi)
+        self.concise = ConciseContract(self.contract)
 
-        param = self.getTxParam(**kwargs)
+    def getCount(self):
+        if self.contract != None:
+            return self.contract.functions.count().call()
+        return -1
+
+    def getTimestamp(self, _datetime) :
+        if self.contract != None:
+            return self.contract.functions.getTimestamp(_datetime).call()
+        return ''
+
+    def getHash(self, _datetime) :
+        if self.contract != None:
+            return self.contract.functions.getHash(_datetime).call()
+        return ''
+
+    def getDateTime(self, count) :
+        if self.contract != None:
+            return self.contract.functions.getDateTime(count).call()
+        return ''
+
+    def putHash(self, _datetime, _hashVal, **kwargs) :
         
-        cc = self.w3.eth.contract(address=contract_addr, abi=abi_content)
+        if self.contract != None:
 
-        raw_txn = cc.functions.storeHash(_datetime, _hashVal).buildTransaction({
-            'chainId': self.chainId,
-            'gas': param['gas'],
-            'gasPrice': param['gasPrice'],
-            'nonce': param['nonce'],
-        })
+            param = self.getTxParam(**kwargs)
 
-        return self.signAndSend(raw_txn)
+            raw_txn = self.contract.functions.storeHash(_datetime, _hashVal).buildTransaction({
+                'chainId': self.chainId,
+                'gas': param['gas'],
+                'gasPrice': param['gasPrice'],
+                'nonce': param['nonce'],
+            })
+
+            return self.signAndSend(raw_txn)
+
+        return None
 
 if __name__ == "__main__":
 
