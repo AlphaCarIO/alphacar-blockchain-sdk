@@ -27,14 +27,10 @@ class MongoWrapper(object):
         try:
             new_conf = DEFAULT_CONF.copy()
             new_conf.update(conf)
-            
-            port = new_conf['port']
-            if not isinstance(port, int):
-                port = int(port)
 
-            self.conn = pymongo.MongoClient(new_conf['host'], port)
-            reCreated = True if new_conf['reCreated'] == '1' else False
-            if reCreated:
+            self.conn = pymongo.MongoClient(new_conf['host'], new_conf['port'])
+            self.reCreated = new_conf['reCreated']
+            if self.reCreated:
                 self.conn.drop_database(new_conf['db_name'])
             self.db = self.conn[new_conf['db_name']]
             self.username=new_conf['username']

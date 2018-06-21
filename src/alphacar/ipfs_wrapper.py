@@ -9,7 +9,9 @@ DEFAULT_CONF = {
 class IPFSWrapper(object):
 
     def __init__(self, conf = DEFAULT_CONF):
-        self.client = ipfsapi.Client(conf['host'], conf['port'])
+        new_conf = DEFAULT_CONF.copy()
+        new_conf.update(conf)
+        self.client = ipfsapi.Client(new_conf['host'], new_conf['port'])
 
     def id(self):
         return self.client.id()

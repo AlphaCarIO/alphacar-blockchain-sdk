@@ -6,8 +6,10 @@ import json
 DEFAULT_CONF = {
     'chainId': 3,
     'url': 'https://ropsten.infura.io/4gmRz0RyQUqgK0Q1jdu5',
-    'privatekey_path': 'keystore/UTC--2018-01-14T18-46-20.321874736Z--da83aee0f49802a331d455f503341a5fdcbde923',
-    'password': 'a',
+    #'privatekey_path': 'keystore/UTC--2018-01-14T18-46-20.321874736Z--da83aee0f49802a331d455f503341a5fdcbde923',
+    #'password': 'a',
+    'privatekey_path': '',
+    'password': '',
     'address': '0xda83aee0f49802a331d455f503341a5fdcbde923',
     'needKey': False,
 }
@@ -19,8 +21,6 @@ class Web3Wrapper(object):
         new_conf.update(conf)
     
         self.chainId = new_conf['chainId']
-        if not isinstance(self.chainId, int):
-            self.chainId = int(self.chainId)
         self.w3 = Web3(HTTPProvider(new_conf['url']))
         pk_path = new_conf['privatekey_path']
         password = new_conf['password']
@@ -98,7 +98,7 @@ class Web3Wrapper(object):
 
         print('balance:', self.w3.eth.getBalance(acc))
         print('acc:', acc, ' gasPrice:', gasPrice)
-        tx_hash = contract.deploy(transaction={'from': acc, 'gas': gas, 'gasPrice': gasPrice, 'value': 0})
+        tx_hash = contract.deploy(transaction={'from': acc, 'to': '', 'gas': gas, 'gasPrice': gasPrice, 'value': 0})
         return tx_hash
 
     def storeHash(self, _datetime, _hashVal, contract_addr, abi_content, **kwargs) :
