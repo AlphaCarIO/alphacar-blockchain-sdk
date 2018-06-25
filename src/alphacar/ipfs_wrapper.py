@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 import ipfsapi
 
-DEFAULT_CONF = {
-    'host' : '127.0.0.1',
-    'port': 5001,
-}
-
 class IPFSWrapper(object):
 
+    DEFAULT_CONF = {
+        'host' : '127.0.0.1',
+        'port': 5001,
+    }
+
     def __init__(self, conf = DEFAULT_CONF):
-        new_conf = DEFAULT_CONF.copy()
+        new_conf = self.DEFAULT_CONF.copy()
         new_conf.update(conf)
         self.client = ipfsapi.Client(new_conf['host'], new_conf['port'])
 

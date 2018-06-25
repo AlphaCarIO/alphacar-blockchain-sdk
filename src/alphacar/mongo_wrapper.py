@@ -3,15 +3,6 @@ import pymongo
 import sys
 import traceback
 
-DEFAULT_CONF = {
-    'host': '127.0.0.1',
-    'port': 27017,
-    'db_name': 'alphacar',
-    'username': None,
-    'password': None,
-    'reCreated': False,
-}
-
 class Singleton(object):
     
     def __new__(cls, *args, **kwargs):
@@ -22,10 +13,26 @@ class Singleton(object):
 
 class MongoWrapper(object):
 
+    DEFAULT_CONF = {
+        'host': '127.0.0.1',
+        'port': 27017,
+        'db_name': 'alphacar',
+        'max_pool_size': 10,
+        'timeout': 10,
+        'username': None,
+        'password': None,
+        'reCreated': False,
+    }
+
     def __init__(self, conf = DEFAULT_CONF):
-        new_conf = DEFAULT_CONF.copy()
+        new_conf = self.DEFAULT_CONF.copy()
         new_conf.update(conf)
-        self.conn = pymongo.MongoClient(new_conf['host'], new_conf['port'])
+        self.host = new_conf['host']
+        self.port = new_conf['port']
+        self.max_pool_size = new_conf['max_pool_size']
+        self.timeout = new_conf['timeout']
+        self.conn = pymongo.MongoClient(self.host, self.port, 
+            maxPoolSize = self.max_pool_size, connectTimeoutMS = 60 * 60 * self.timeout)
 
     def connect_db(self, db_name, username = '', password = '') :
         try:
@@ -42,6 +49,10 @@ class MongoWrapper(object):
             print('Connect Statics Database Fail.')
         return False
 
+    def close(self):
+        if self.conn:
+            self.conn.close()
+
     def drop_database(self, db_name):
 
         if self.connected:
@@ -54,6 +65,7 @@ class MongoWrapper(object):
 
         if self.connected and len(inds) > 0:
             self.db[collection_name].create_index(inds, unique = unique)
+            self.close()
             return True
 
         return False
@@ -63,6 +75,7 @@ class MongoWrapper(object):
         try:
             if self.connected and datas != None:
                 self.db[collection_name].insert(datas)
+                self.close()
                 return True
         except Exception:
             #print(traceback.format_exc())

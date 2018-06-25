@@ -4,21 +4,21 @@ from web3.contract import ConciseContract
 
 import json
 
-DEFAULT_CONF = {
-    'chainId': 3,
-    'url': 'https://ropsten.infura.io/4gmRz0RyQUqgK0Q1jdu5',
-    #'privatekey_path': 'keystore/UTC--2018-01-14T18-46-20.321874736Z--da83aee0f49802a331d455f503341a5fdcbde923',
-    #'password': 'a',
-    'privatekey_path': '',
-    'password': '',
-    'address': '0xda83aee0f49802a331d455f503341a5fdcbde923',
-    'needKey': False,
-}
-
 class Web3Wrapper(object):
 
+    DEFAULT_CONF = {
+        'chainId': 3,
+        'url': 'https://ropsten.infura.io/4gmRz0RyQUqgK0Q1jdu5',
+        #'privatekey_path': 'keystore/UTC--2018-01-14T18-46-20.321874736Z--da83aee0f49802a331d455f503341a5fdcbde923',
+        #'password': 'a',
+        'privatekey_path': '',
+        'password': '',
+        'address': '0xda83aee0f49802a331d455f503341a5fdcbde923',
+        'needKey': False,
+    }
+
     def __init__(self, conf = DEFAULT_CONF):
-        new_conf = DEFAULT_CONF.copy()
+        new_conf = self.DEFAULT_CONF.copy()
         new_conf.update(conf)
 
         self.contract = None
@@ -50,6 +50,12 @@ class Web3Wrapper(object):
         tx = self.w3.eth.sendRawTransaction(signed_txn.rawTransaction)
         return tx
 
+    def getNonce(self, account = ''):
+        if account == '':
+            account = self.w3.eth.defaultAccount
+        nonce = self.w3.eth.getTransactionCount(account)
+        return nonce
+
     def getTxParam(self, **kwargs):
 
         gas = 3 * 10 ** 6
@@ -60,7 +66,7 @@ class Web3Wrapper(object):
         if 'account' in kwargs.keys():
             account = kwargs['account']
 
-        nonce = self.w3.eth.getTransactionCount(account)
+        nonce = self.getNonce(account)
 
         if 'nonce' in kwargs.keys():
             nonce = kwargs['nonce']
