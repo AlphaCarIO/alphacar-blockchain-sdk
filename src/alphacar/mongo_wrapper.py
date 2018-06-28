@@ -65,7 +65,7 @@ class MongoWrapper(object):
 
         if self.connected and len(inds) > 0:
             self.db[collection_name].create_index(inds, unique = unique)
-            self.close()
+            #self.close()
             return True
 
         return False
@@ -75,7 +75,7 @@ class MongoWrapper(object):
         try:
             if self.connected and datas != None:
                 self.db[collection_name].insert(datas)
-                self.close()
+                #self.close()
                 return True
         except Exception:
             #print(traceback.format_exc())

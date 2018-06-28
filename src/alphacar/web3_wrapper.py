@@ -113,43 +113,6 @@ class Web3Wrapper(object):
         self.contract = self.w3.eth.contract(address = crowdsale_addr, abi = _abi)
         self.concise = ConciseContract(self.contract)
 
-    def getCount(self):
-        if self.contract != None:
-            return self.contract.functions.count().call()
-        return -1
-
-    def getTimestamp(self, _datetime) :
-        if self.contract != None:
-            return self.contract.functions.getTimestamp(_datetime).call()
-        return ''
-
-    def getHash(self, _datetime) :
-        if self.contract != None:
-            return self.contract.functions.getHash(_datetime).call()
-        return ''
-
-    def getDateTime(self, count) :
-        if self.contract != None:
-            return self.contract.functions.getDateTime(count).call()
-        return ''
-
-    def putHash(self, _datetime, _hashVal, **kwargs) :
-        
-        if self.contract != None:
-
-            param = self.getTxParam(**kwargs)
-
-            raw_txn = self.contract.functions.storeHash(_datetime, _hashVal).buildTransaction({
-                'chainId': self.chainId,
-                'gas': param['gas'],
-                'gasPrice': param['gasPrice'],
-                'nonce': param['nonce'],
-            })
-
-            return self.signAndSend(raw_txn)
-
-        return None
-
 if __name__ == "__main__":
 
     w3 = Web3Wrapper()
