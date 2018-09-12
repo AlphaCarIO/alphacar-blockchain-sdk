@@ -109,8 +109,8 @@ class Web3Wrapper(object):
         tx_hash = contract.deploy(transaction={'from': acc, 'to': '', 'gas': gas, 'gasPrice': gasPrice, 'value': 0})
         return tx_hash
 
-    def initContract(self, crowdsale_addr, _abi):
-        self.contract = self.w3.eth.contract(address = crowdsale_addr, abi = _abi)
+    def initContract(self, contract_addr, _abi):
+        self.contract = self.w3.eth.contract(address = contract_addr, abi = _abi)
         self.concise = ConciseContract(self.contract)
 
 if __name__ == "__main__":
