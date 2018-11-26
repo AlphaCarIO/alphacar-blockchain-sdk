@@ -4,7 +4,7 @@ import sys
 import traceback
 
 class Singleton(object):
-    
+
     def __new__(cls, *args, **kwargs):
         if not hasattr(cls, '_instance'):
             orig = super(Singleton, cls)
@@ -31,7 +31,7 @@ class MongoWrapper(object):
         self.port = new_conf['port']
         self.max_pool_size = new_conf['max_pool_size']
         self.timeout = new_conf['timeout']
-        self.conn = pymongo.MongoClient(self.host, self.port, 
+        self.conn = pymongo.MongoClient(self.host, self.port,
             maxPoolSize = self.max_pool_size, connectTimeoutMS = 60 * 60 * self.timeout)
 
     def connect_db(self, db_name, username = '', password = '') :
@@ -40,7 +40,7 @@ class MongoWrapper(object):
             self.username = username
             self.password = password
             if self.username and self.username != '' and self.password and self.password != '' :
-                self.connected = self.db.authenticate(self.username, self.password)
+                self.connected = self.conn['admin'].authenticate(self.username, self.password)
             else:
                 self.connected = True
             return True
@@ -82,4 +82,3 @@ class MongoWrapper(object):
             print('insert_data got ex!')
 
         return False
-            
